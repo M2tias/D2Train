@@ -7,21 +7,9 @@ public class Building : MonoBehaviour
     private BuildingType type;
     public BuildingType Type { get { return type; } }
 
-    private Dictionary<Neighbour, Building> Neighbours = new();
-    private Dictionary<Neighbour, Vector2> NeighbourPositions = new() {
-        { Neighbour.Left, Vector2.left },
-        { Neighbour.Right, Vector2.right },
-        { Neighbour.Top, Vector2.up },
-        { Neighbour.Bottom, Vector2.down }
-    };
+    private Dictionary<Neighbour, Building> neighbours = new();
+    public Dictionary<Neighbour, Building> Neighbours { get { return neighbours; } }
 
-    private Dictionary<Neighbour, Neighbour> reverseNeighbour = new()
-    {
-        {Neighbour.Left, Neighbour.Right },
-        {Neighbour.Right, Neighbour.Left },
-        {Neighbour.Top, Neighbour.Bottom },
-        {Neighbour.Bottom, Neighbour.Top },
-    };
 
     private GameObject buildingModel;
 
@@ -49,16 +37,16 @@ public class Building : MonoBehaviour
 
     public void CheckNeighbours()
     {
-        if (Neighbours.Count >= 2)
+        if (neighbours.Count >= 2)
         {
             return;
         }
 
         List<Building> possibleNeighbours = BuildingManager.main.NeighbourlessBuildings;
 
-        foreach (KeyValuePair<Neighbour, Vector2> kvp in NeighbourPositions)
+        foreach (KeyValuePair<Neighbour, Vector2> kvp in NeighbourHelper.NeighbourPositions)
         {
-            if (Neighbours.ContainsKey(kvp.Key)) { continue; }
+            if (neighbours.ContainsKey(kvp.Key)) { continue; }
 
             foreach (Building building in possibleNeighbours)
             {
@@ -67,11 +55,11 @@ public class Building : MonoBehaviour
 
                 if (Vec.isSameCell(Vec.CellPos(transform.position) + kvp.Value, Vec.CellPos(building.transform.position)))
                 {
-                    Neighbours.Add(kvp.Key, building);
-                    building.AddNeighbour(reverseNeighbour[kvp.Key], this);
+                    neighbours.Add(kvp.Key, building);
+                    building.AddNeighbour(NeighbourHelper.ReverseNeighbour[kvp.Key], this);
                 }
 
-                if (Neighbours.Count >= 2)
+                if (neighbours.Count >= 2)
                 {
                     hasFreeNeighbours = false;
                     break;
@@ -84,20 +72,20 @@ public class Building : MonoBehaviour
 
     private void UpdateModel()
     {
-        if (Neighbours.Count != previousNeighbourCount)
+        if (neighbours.Count != previousNeighbourCount)
         {
             Destroy(buildingModel);
-            GameObject prefab = BuildingManager.main.GetBuildingModel(type, Neighbours.Keys);
+            GameObject prefab = BuildingManager.main.GetBuildingModel(type, neighbours.Keys);
             buildingModel = Instantiate(prefab, transform.position, prefab.transform.rotation, transform);
-            previousNeighbourCount = Neighbours.Count;
+            previousNeighbourCount = neighbours.Count;
         }
     }
 
     public void AddNeighbour(Neighbour neighbour, Building building)
     {
-        Neighbours.Add(neighbour, building);
+        neighbours.Add(neighbour, building);
 
-        if (Neighbours.Count >= 2)
+        if (neighbours.Count >= 2)
         {
             hasFreeNeighbours = false;
         }

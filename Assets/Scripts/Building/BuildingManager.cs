@@ -13,17 +13,22 @@ public class BuildingManager : MonoBehaviour
     List<Pair<BuildingType, List<Pair<List<Neighbour>, GameObject>>>> buildingModels = new();
     [SerializeField]
     private List<Pair<BuildingType, GameObject>> defaultBuildingModels = new();
+    [SerializeField]
+    private int resourcePerCar = 5;
 
+    private int resources = 5;
     public static BuildingManager main;
 
     private Queue<Construction> buildQueue = new();
     private List<Building> buildings = new();
-
     private List<Building> neighbourlessBuildings = new();
+    private List<Building> tracksToTraverse = new();
+
     private List<Vector2> reservedSpaces = new(); // use CellPos
 
     public List<Building> NeighbourlessBuildings { get { return neighbourlessBuildings; } }
     public List<Vector2> Reserved { get { return reservedSpaces; } }
+    public List<Building> TracksToTraverse { get { return tracksToTraverse; } }
 
     private Construction currentConstruction;
     private Building previousBuilding;
@@ -39,7 +44,14 @@ public class BuildingManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        for (int i = 0; i < 5; i++)
+        {
+            Vector2 pos = Vec.CellPos(Vector3.zero + Vector3.forward * i);
+            reservedSpaces.Add(pos);
+            SpawnBuilding(BuildingType.Rail, Vec.V2to3(pos), "initialTrack" + i);
+        }
 
+        TrainManager.main.SetFirstTrack();
     }
 
     // Update is called once per frame
@@ -91,6 +103,11 @@ public class BuildingManager : MonoBehaviour
         return null;
     }
 
+    public void AddResources()
+    {
+        resources += resourcePerCar;
+    }
+
     private Construction MakeConstruction(GridCursor cursor)
     {
         GameObject construction = constructionPrefabs.FirstOrDefault(x => x.Key == cursor.Type)?.Value;
@@ -113,18 +130,34 @@ public class BuildingManager : MonoBehaviour
 
     private void SpawnBuilding(Construction construction)
     {
-        GameObject buildingPrefab = buildingPrefabs.FirstOrDefault(x => x.Key == construction.Type)?.Value;
+        SpawnBuilding(construction.Type, construction.transform.position);
+    }
+
+    private void SpawnBuilding(BuildingType type, Vector3 pos, string name = null)
+    {
+        GameObject buildingPrefab = buildingPrefabs.FirstOrDefault(x => x.Key == type)?.Value;
 
         if (buildingPrefab != null)
         {
-            GameObject buildingObj = Instantiate(buildingPrefab, construction.transform.position, Quaternion.identity);
+            GameObject buildingObj = Instantiate(buildingPrefab, pos, Quaternion.identity);
             Building building = buildingObj.GetComponent<Building>();
-            GameObject model = defaultBuildingModels.FirstOrDefault(x => x.Key == construction.Type)?.Value;
+            GameObject model = defaultBuildingModels.FirstOrDefault(x => x.Key == type)?.Value;
+            buildingObj.name = $"Building {buildings.Count}";
 
-            building.Initialize(construction.Type, model);
+            if (name != null)
+            {
+                buildingObj.name = name;
+            }
+
+            building.Initialize(type, model);
             buildings.Add(building);
             neighbourlessBuildings.Add(building);
             // Not needed, was added as construction: reservedSpaces.Add(Vec.CellPos(building.transform.position));
+
+            if (type == BuildingType.Rail)
+            {
+                tracksToTraverse.Add(building);
+            }
         }
 
         foreach (var building in neighbourlessBuildings)
@@ -144,12 +177,4 @@ public class BuildingManager : MonoBehaviour
 public enum BuildingType
 {
     Rail
-}
-
-public enum Neighbour
-{
-    Left,
-    Right,
-    Top,
-    Bottom
 }
