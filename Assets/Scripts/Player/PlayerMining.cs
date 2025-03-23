@@ -44,10 +44,15 @@ public class PlayerMining : MonoBehaviour
                 miningLaserParticle.Stop();
             }
 
+            if (Input.GetMouseButtonDown(0))
+            {
+                Debug.Log("shooting");
+                shootingLaserParticle.Play();
+            }
+            
             if (Input.GetMouseButton(0))
             {
-                shootingLaserParticle.Play();
-                Physics.Raycast(shootingLaserParticle.transform.position, shootingLaserParticle.transform.forward, out RaycastHit hitInfo, 10f, 1 << LayerMask.NameToLayer("Enemy"));
+                Physics.Raycast(shootingLaserParticle.transform.position, shootingLaserParticle.transform.forward, out RaycastHit hitInfo, 6f, 1 << LayerMask.NameToLayer("Enemy"));
 
                 if (hitInfo.collider != null)
                 {
@@ -59,13 +64,18 @@ public class PlayerMining : MonoBehaviour
                     }
                 }
             }
+            
+            // if (Input.GetMouseButtonUp(0))
             else
             {
+                Debug.Log("not shooting 1");
                 shootingLaserParticle.Stop();
+                shootingHitTime = Time.time;
             }
         }
         else
         {
+            Debug.Log("not shooting 2");
             shootingLaserParticle.Stop();
             miningLaserParticle.Stop();
         }
