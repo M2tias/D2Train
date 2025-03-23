@@ -23,10 +23,13 @@ public class BuildingManager : MonoBehaviour
     private List<Vector2> reservedSpaces = new(); // use CellPos
 
     public List<Building> NeighbourlessBuildings { get { return neighbourlessBuildings; } }
-    public List<Vector2> Reserved {  get { return reservedSpaces; } }
+    public List<Vector2> Reserved { get { return reservedSpaces; } }
 
     private Construction currentConstruction;
     private Building previousBuilding;
+    private bool isBuildingMode = false;
+
+    public bool IsBuildingMode { get { return isBuildingMode; } }
 
     private void Awake()
     {
@@ -52,6 +55,11 @@ public class BuildingManager : MonoBehaviour
             SpawnBuilding(currentConstruction);
             currentConstruction.Destroy();
             currentConstruction = null;
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            isBuildingMode = !isBuildingMode;
         }
     }
 

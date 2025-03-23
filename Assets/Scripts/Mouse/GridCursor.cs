@@ -63,9 +63,17 @@ public class GridCursor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        mesh.enabled = BuildingManager.main.IsBuildingMode;
+
+        if (!BuildingManager.main.IsBuildingMode)
+        {
+            return;
+        }
+
         if (isDragPlacement)
         {
-            if (isPlacementValid) {
+            if (isPlacementValid)
+            {
                 mesh.material.color = defaultColor;
             }
             else
@@ -105,7 +113,8 @@ public class GridCursor : MonoBehaviour
                 placementObjects.ForEach(x => x.SetValid(false));
             }
 
-            if (!dragStarted) {
+            if (!dragStarted)
+            {
                 dragStartPos = cellPos;
                 dragStarted = true;
                 prevDragPos = dragStartPos;
@@ -168,7 +177,7 @@ public class GridCursor : MonoBehaviour
                         placement.Destroy();
                     }
 
-                    placementObjects.RemoveRange(existingPlacementIndex, placementObjects.Count- existingPlacementIndex);
+                    placementObjects.RemoveRange(existingPlacementIndex, placementObjects.Count - existingPlacementIndex);
                     prevDragPos = cellPos;
                 }
             }
