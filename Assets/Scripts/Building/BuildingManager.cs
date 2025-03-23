@@ -17,7 +17,6 @@ public class BuildingManager : MonoBehaviour
     private int resourcePerCar = 5;
 
     private int resources = 5;
-    public static BuildingManager main;
 
     private Queue<Construction> buildQueue = new();
     private List<Building> buildings = new();
@@ -35,6 +34,9 @@ public class BuildingManager : MonoBehaviour
     private bool isBuildingMode = false;
 
     public bool IsBuildingMode { get { return isBuildingMode; } }
+    public int Resources { get { return resources; } }
+
+    public static BuildingManager main;
 
     private void Awake()
     {

@@ -86,7 +86,7 @@ public class TrainManager : MonoBehaviour
                 if (track != null)
                 {
                     targetTrack = track;
-                    Debug.Log($"Setting next track to {targetTrack.name}");
+                    // Debug.Log($"Setting next track to {targetTrack.name}");
                 }
 
                 lerpEnd = Vec.V2to3(Vec.CellPos(targetTrack.transform.position));
@@ -126,6 +126,8 @@ public class TrainManager : MonoBehaviour
                 TrainEngine.transform.rotation = Quaternion.Slerp(curRot, nextRot, lerpT - 0.5f);
             }
         }
+
+        UIManager.main.UpdateTrainDistance((new Vector3(0, 0, 300f) - TrainEngine.transform.position).magnitude);
     }
 
     private Building GetNextBuilding(Building b, Building prev)

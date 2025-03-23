@@ -46,7 +46,6 @@ public class PlayerMining : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                Debug.Log("shooting");
                 shootingLaserParticle.Play();
             }
             
@@ -58,7 +57,7 @@ public class PlayerMining : MonoBehaviour
                 {
                     if (Time.time - shootingHitTime > shootingHitCD)
                     {
-                        Debug.Log($"CAR BEING DEMOLISHED {hitInfo.collider.gameObject.name}");
+                        Debug.Log($"ENEMY BEING DEMOLISHED {hitInfo.collider.gameObject.name}");
                         hitInfo.collider.gameObject.GetComponent<Enemy>().DoDamage();
                         shootingHitTime = Time.time;
                     }
@@ -68,16 +67,30 @@ public class PlayerMining : MonoBehaviour
             // if (Input.GetMouseButtonUp(0))
             else
             {
-                Debug.Log("not shooting 1");
                 shootingLaserParticle.Stop();
                 shootingHitTime = Time.time;
             }
         }
         else
         {
-            Debug.Log("not shooting 2");
             shootingLaserParticle.Stop();
             miningLaserParticle.Stop();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Triggered");
+
+        if (other.tag == "Resource")
+        {
+            Debug.Log("Triggered resource");
+
+            if (other.gameObject.TryGetComponent(out ResourcePickup pickup))
+            {
+                BuildingManager.main.AddResources();
+                Destroy(pickup.gameObject);
+            }
         }
     }
 }

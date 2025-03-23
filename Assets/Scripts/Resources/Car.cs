@@ -6,6 +6,8 @@ public class Car : MonoBehaviour
     private float HP;
     [SerializeField]
     private MeshRenderer mesh;
+    [SerializeField]
+    private GameObject resourcePickupPrefab;
 
     private BoxCollider col;
 
@@ -29,7 +31,8 @@ public class Car : MonoBehaviour
 
         if (HP == 0)
         {
-            BuildingManager.main.AddResources();
+            Instantiate(resourcePickupPrefab, transform.position, Quaternion.identity);
+            // BuildingManager.main.AddResources();
             col.enabled = false;
             mesh.enabled = false;
             Invoke("Kill", 2f);
