@@ -9,16 +9,24 @@ public class BuildingManager : MonoBehaviour
     List<Pair<BuildingType>> constructionPrefabs = new();
     [SerializeField]
     List<Pair<BuildingType>> buildingPrefabs = new();
-
+    [SerializeField]
+    List<Pair<BuildingType, List<Pair<List<Neighbour>, GameObject>>>> buildingModels = new();
+    [SerializeField]
+    private List<Pair<BuildingType, GameObject>> defaultBuildingModels = new();
 
     public static BuildingManager main;
 
     private Queue<Construction> buildQueue = new();
     private List<Building> buildings = new();
+
+    private List<Building> neighbourlessBuildings = new();
     private List<Vector2> reservedSpaces = new(); // use CellPos
+
+    public List<Building> NeighbourlessBuildings { get { return neighbourlessBuildings; } }
     public List<Vector2> Reserved {  get { return reservedSpaces; } }
 
     private Construction currentConstruction;
+    private Building previousBuilding;
 
     private void Awake()
     {
@@ -54,7 +62,25 @@ public class BuildingManager : MonoBehaviour
 
     public bool IsReserved(Vector3 pos)
     {
-        return reservedSpaces.Any(space => !Vec.isNotSameCell(pos, space));
+        return reservedSpaces.Any(space => Vec.isSameCell(pos, space));
+    }
+
+    public GameObject GetBuildingModel(BuildingType type, IEnumerable<Neighbour> neighbours)
+    {
+        List<Pair<List<Neighbour>, GameObject>> list = buildingModels.FirstOrDefault(x => x.Key == type)?.Value;
+
+        foreach (var pair in list)
+        {
+            bool match = pair.Key.All(neighbours.Contains) && pair.Key.Count == neighbours.Count();
+
+            if (match)
+            {
+                return pair.Value;
+            }
+        }
+
+        Debug.LogError($"Couldn't find building model for {type} with neighbours {string.Join(", ", neighbours)}");
+        return null;
     }
 
     private Construction MakeConstruction(GridCursor cursor)
@@ -85,14 +111,37 @@ public class BuildingManager : MonoBehaviour
         {
             GameObject buildingObj = Instantiate(buildingPrefab, construction.transform.position, Quaternion.identity);
             Building building = buildingObj.GetComponent<Building>();
-            building.Initialize(construction.Type);
+            GameObject model = defaultBuildingModels.FirstOrDefault(x => x.Key == construction.Type)?.Value;
+
+            building.Initialize(construction.Type, model);
             buildings.Add(building);
+            neighbourlessBuildings.Add(building);
             // Not needed, was added as construction: reservedSpaces.Add(Vec.CellPos(building.transform.position));
         }
+
+        foreach (var building in neighbourlessBuildings)
+        {
+            if (!building.HasFreeNeighbours)
+            {
+                continue;
+            }
+
+            building.CheckNeighbours();
+        }
+
+        neighbourlessBuildings.RemoveAll(x => !x.HasFreeNeighbours);
     }
 }
 
 public enum BuildingType
 {
     Rail
+}
+
+public enum Neighbour
+{
+    Left,
+    Right,
+    Top,
+    Bottom
 }

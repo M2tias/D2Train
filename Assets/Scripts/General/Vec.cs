@@ -15,12 +15,13 @@ public static class Vec
         return new Vector2(x, z);
     }
 
-    public static bool isNotSameCell(Vector2 cellPos, Vector3 pos)
+    public static bool isSameCell(Vector2 cellPos, Vector3 pos)
     {
-        return Mathf.Abs(cellPos.x - pos.x) > 0.5f || Mathf.Abs(cellPos.y - pos.z) > 0.5f;
+        return Vector2.Distance(cellPos, CellPos(pos)) < 0.95f; //Mathf.Abs(cellPos.x - pos.x) > 0.5f || Mathf.Abs(cellPos.y - pos.z) > 0.5f;
     }
-    public static bool isNotSameCell(Vector2 cellPos, Vector2 pos)
+
+    public static bool isSameCell(Vector2 cellPos, Vector2 pos)
     {
-        return Mathf.Abs(cellPos.x - pos.x) > 0.5f || Mathf.Abs(cellPos.y - pos.y) > 0.5f;
+        return Vector2.Distance(cellPos, pos) < 0.95f; //Mathf.Abs(cellPos.x - pos.x) > 0.5f || Mathf.Abs(cellPos.y - pos.y) > 0.5f;
     }
 }

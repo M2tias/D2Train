@@ -93,12 +93,8 @@ public class GridCursor : MonoBehaviour
 
         if (Input.GetMouseButton(0) && !disableDragging)
         {
-
-            // Debug.Log($"Dragging, {dragStartPos}, {transform.position}");
-
             if (IsEnoughResources() && isDragValid)
             {
-                Debug.Log($"lol fug {IsEnoughResources()}, {isDragValid}");
                 mesh.material.color = holdColor;
                 placementObjects.ForEach(x => x.SetValid(true));
             }
@@ -117,11 +113,15 @@ public class GridCursor : MonoBehaviour
             }
             else
             {
-
-                bool isNotPrevPos = Vec.isNotSameCell(prevDragPos, cellPos);
-                int existingPlacementIndex = placementObjects.FindIndex(0, placementObjects.Count, p => !Vec.isNotSameCell(cellPos, p.transform.position));
+                bool isNotPrevPos = !Vec.isSameCell(prevDragPos, cellPos);
+                int existingPlacementIndex = placementObjects.FindIndex(0, placementObjects.Count, p => Vec.isSameCell(cellPos, p.transform.position));
 
                 bool isReserved = BuildingManager.main.IsReserved(cellPos);
+
+                if (placementObjects.Count == 0)
+                {
+                    isDragValid = !isReserved;
+                }
 
                 if (isReserved && placementObjects.Count == 0)
                 {
@@ -131,8 +131,6 @@ public class GridCursor : MonoBehaviour
                     isDragValid = false;
                 }
 
-                // Debug.Log($"{isNotPrevPos}, {existingPlacementIndex > -1}, {placementObjects.Count}");
-
                 if (isNotPrevPos && existingPlacementIndex < 0)
                 {
                     AddGridPlacement();
@@ -141,9 +139,15 @@ public class GridCursor : MonoBehaviour
 
                     if (!isReserved)
                     {
-                        isReserved = placementObjects.Any(x => BuildingManager.main.IsReserved(x.transform.position));
-                        Debug.Log($"placements {string.Join(",", placementObjects.Select(x => Vec.CellPos(x.transform.position).ToString()))}");
-                        Debug.Log($"reserveds  {string.Join(",", BuildingManager.main.Reserved.Select(x => x.ToString()))}");
+                        foreach (GridCursor placement in placementObjects)
+                        {
+                            isReserved = isReserved && BuildingManager.main.IsReserved(placement.transform.position);
+
+                            if (isReserved)
+                            {
+                                break;
+                            }
+                        }
                     }
 
                     if (isReserved)
@@ -153,8 +157,6 @@ public class GridCursor : MonoBehaviour
                         placementObjects.ForEach(x => x.SetValid(false));
                         isDragValid = false;
                     }
-
-                    Debug.Log($"{isDragValid} ! {tmpIsReserved} -> {isReserved}, {cellPos}, {placementObjects.Count}");
 
                     prevDragPos = cellPos;
                 }
