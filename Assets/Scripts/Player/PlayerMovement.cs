@@ -32,16 +32,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!BuildingManager.main.IsBuildingMode)
+        //if (!BuildingManager.main.IsBuildingMode)
+        //{
+        Ray mouseRay = cam.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(mouseRay, out RaycastHit hitInfo, 100, 1 << LayerMask.NameToLayer("AimRay")))
         {
-            Ray mouseRay = cam.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(mouseRay, out RaycastHit hitInfo, 100, 1 << LayerMask.NameToLayer("MouseRay")))
-            {
-                Vector3 mousePoint = new Vector3(hitInfo.point.x, 0f, hitInfo.point.z);
-                mouseDir = (mousePoint - playerModel.transform.position).normalized;
-                mouseDir = new Vector3(mouseDir.x, 0f, mouseDir.z);
-            }
+            Vector3 mousePoint = new Vector3(hitInfo.point.x, 0f, hitInfo.point.z);
+            mouseDir = (mousePoint - playerModel.transform.position).normalized;
+            mouseDir = new Vector3(mouseDir.x, 0f, mouseDir.z);
         }
+        //}
 
         float step = rotateSpeed * Time.deltaTime;
         playerModel.transform.rotation = Quaternion.RotateTowards(playerModel.transform.rotation, Quaternion.LookRotation(mouseDir), step);
