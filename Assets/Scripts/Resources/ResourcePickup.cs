@@ -4,6 +4,8 @@ public class ResourcePickup : MonoBehaviour
 {
     [SerializeField]
     private GameObject resourcePickupModel;
+    [SerializeField]
+    private AudioSource pickupSound;
 
     private Vector3 modelPos;
     // Start is called once before the first execution of Update after the MonoBehaviour is created

@@ -168,6 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourcePickupModel: {fileID: 8707362162732153050}
+  pickupSound: {fileID: 0}
 --- !u!136 &7935902950036870175
 CapsuleCollider:
   m_ObjectHideFlags: 0

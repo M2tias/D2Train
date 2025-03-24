@@ -8,6 +8,8 @@ public class TrainManager : MonoBehaviour
     private GameObject TrainEngine;
     [SerializeField]
     private GameObject player;
+    [SerializeField]
+    private AudioSource trainHitSound;
 
     private Building targetTrack;
     private Building currentTrack;
@@ -40,7 +42,7 @@ public class TrainManager : MonoBehaviour
     public int TrainHP { get { return trainHP; } }
     public int PlayerHP { get { return playerHP; } }
     public float Distance { get { return distance; } }
-    public float Goal { get { return 300f; } }
+    public float Goal { get { return 293f; } }
 
     private void Awake()
     {
@@ -143,6 +145,11 @@ public class TrainManager : MonoBehaviour
 
         distance = (new Vector3(0, 0, Goal) - TrainEngine.transform.position).magnitude;
         UIManager.main.UpdateTrainDistance(distance);
+
+        if (distance >= 300f)
+        {
+            Invoke("YouWin", 3f);
+        }
     }
 
     private Building GetNextBuilding(Building b, Building prev)
@@ -164,10 +171,12 @@ public class TrainManager : MonoBehaviour
     {
         if (isTrain)
         {
+            trainHitSound.Play();
             trainHP -= 2;
         }
         else
         {
+            player.GetComponent<PlayerHealing>().HitSound();
             playerHP -= 10;
         }
 
@@ -196,6 +205,11 @@ public class TrainManager : MonoBehaviour
     public void GameOver()
     {
         Debug.Log("Game over!");
+    }
+
+    public void YouWin()
+    {
+        Debug.Log("You win!");
     }
 
     private Vector2 DirToVector(Neighbour tileDir)

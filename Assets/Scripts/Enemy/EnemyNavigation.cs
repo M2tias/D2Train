@@ -5,6 +5,8 @@ public class EnemyNavigation : MonoBehaviour
 {
     [SerializeField]
     private ParticleSystem laserParticle;
+    [SerializeField]
+    private AudioSource laserSound;
 
     private float shootDist = 6f;
     private float moveDist = 7.5f;
@@ -86,6 +88,7 @@ public class EnemyNavigation : MonoBehaviour
                 shootTime = Time.time;
                 Debug.Log("shoot");
                 laserParticle.Play();
+                laserSound.Play();
                 Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, 8f, 1 << LayerMask.NameToLayer("Player"));
 
                 if (hitInfo.collider != null)
@@ -100,11 +103,13 @@ public class EnemyNavigation : MonoBehaviour
             if (Time.time - shootTime > shootEffectTime)
             {
                 laserParticle.Stop();
+                laserSound.Stop();
             }
 
             if (Vector3.Distance(Xz(trainPos), Xz(pos)) > moveDist)
             {
                 laserParticle.Stop();
+                laserSound.Stop();
                 state = EnemyState.Move;
             }
         }
