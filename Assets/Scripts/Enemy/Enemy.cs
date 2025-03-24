@@ -7,11 +7,13 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private MeshRenderer mesh;
 
-    private SphereCollider col;
+    private EnemyNavigation nav;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        col = GetComponent<SphereCollider>();
+        nav = GetComponent<EnemyNavigation>();
     }
 
     // Update is called once per frame
@@ -21,13 +23,13 @@ public class Enemy : MonoBehaviour
     }
     public void DoDamage()
     {
+        nav.SwitchToPlayer();
         HP -= 1;
 
         mesh.material.color = mesh.material.color * 0.8f;
 
         if (HP == 0)
         {
-            col.enabled = false;
             mesh.enabled = false;
             Invoke("Kill", 2f);
         }

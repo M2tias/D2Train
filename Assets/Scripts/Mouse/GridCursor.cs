@@ -18,8 +18,6 @@ public class GridCursor : MonoBehaviour
     [SerializeField]
     private GameObject placementPrefab;
 
-    private int resources = 6;
-
     private MeshRenderer mesh;
     private Camera cam;
     private bool isPlacementValid = true;
@@ -227,7 +225,7 @@ public class GridCursor : MonoBehaviour
 
     private bool IsEnoughResources()
     {
-        return resources >= placementObjects.Count + 1;
+        return BuildingManager.main.Resources >= placementObjects.Count + 1;
     }
 
     private void AddGridPlacement()

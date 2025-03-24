@@ -15,6 +15,8 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI buildMode;
     [SerializeField]
     private TextMeshProUGUI fightMode;
+    [SerializeField]
+    private TextMeshProUGUI healMode;
 
     [SerializeField]
     private Color activeModeColor;
@@ -41,14 +43,25 @@ public class UIManager : MonoBehaviour
         {
             buildMode.color = activeModeColor;
             fightMode.color = inactiveModeColor;
+            healMode.color = inactiveModeColor;
         }
-        else
+        else if (BuildingManager.main.IsHealingMode)
+        {
+            buildMode.color = inactiveModeColor;
+            fightMode.color = inactiveModeColor;
+            healMode.color = activeModeColor;
+        }
+        else if (BuildingManager.main.IsFightMode)
         {
             buildMode.color = inactiveModeColor;
             fightMode.color = activeModeColor;
+            healMode.color = inactiveModeColor;
         }
 
         resourceCount.text = BuildingManager.main.Resources.ToString();
+
+        playerHP.text = TrainManager.main.PlayerHP.ToString() + " %";
+        trainHP.text = TrainManager.main.TrainHP.ToString() + " %";
     }
 
     public void UpdateTrainDistance(float distance)

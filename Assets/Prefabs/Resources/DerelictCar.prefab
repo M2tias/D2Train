@@ -67,8 +67,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f386f6d29d70e9b479da29d6119cf8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 5
+  HP: 2
   mesh: {fileID: 9041479791139974850}
+  resourcePickupPrefab: {fileID: 8788816697400123361, guid: 5daa8b1424d8b8e40b05b049f24e7df6, type: 3}
 --- !u!1001 &7689997890460578374
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -7,7 +7,9 @@ public class PlayerMovement : MonoBehaviour
     private GameObject playerModel;
 
     private float rotateSpeed = 15f * 60f;
-    private float speed = 4f;
+    private float speed = 5f;
+    private float speedBoost = 1.3f;
+    private bool boost = false;
     private Camera cam;
     private Vector3 mouseDir = Vector3.zero;
 
@@ -23,9 +25,11 @@ public class PlayerMovement : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
+        boost = Input.GetKey(KeyCode.LeftShift);
+
         Vector3 p = transform.position;
         Vector3 dir = Quaternion.AngleAxis(45, Vector3.up) * new Vector3(horizontal, 0, vertical).normalized;
-        Vector3 velocity = dir * speed * Time.deltaTime;
+        Vector3 velocity = dir * speed * Time.deltaTime * (boost ? speedBoost : 1f);
 
         transform.position = p + velocity;
     }

@@ -6,6 +6,8 @@ public class TrainManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject TrainEngine;
+    [SerializeField]
+    private GameObject player;
 
     private Building targetTrack;
     private Building currentTrack;
@@ -13,7 +15,6 @@ public class TrainManager : MonoBehaviour
     private Neighbour comingToDir = Neighbour.Top;
     private Neighbour targetDir = Neighbour.Top;
     private List<Building> previousTracks;
-    private float trainSpeed = 1.5f;
 
     private Quaternion prevRot = Quaternion.identity;
     private Quaternion curRot = Quaternion.identity;
@@ -21,12 +22,25 @@ public class TrainManager : MonoBehaviour
 
     private Vector2 startPos = Vec.CellPos(Vector2.zero);
 
-    private float lerpSpeed = 1f;
+    private float lerpSpeed = 1.85f;
     private float lerpT = 0f;
     private Vector3 lerpStart = Vector3.zero;
     private Vector3 lerpEnd = Vector3.zero;
 
     public static TrainManager main;
+
+    private float distance = 0f;
+
+    private int playerHP = 100;
+    private int trainHP = 100;
+    private int maxHP = 100;
+
+    public GameObject Train { get { return TrainEngine; } }
+    public GameObject Player { get { return player; } }
+    public int TrainHP { get { return trainHP; } }
+    public int PlayerHP { get { return playerHP; } }
+    public float Distance { get { return distance; } }
+    public float Goal { get { return 300f; } }
 
     private void Awake()
     {
@@ -127,7 +141,8 @@ public class TrainManager : MonoBehaviour
             }
         }
 
-        UIManager.main.UpdateTrainDistance((new Vector3(0, 0, 300f) - TrainEngine.transform.position).magnitude);
+        distance = (new Vector3(0, 0, Goal) - TrainEngine.transform.position).magnitude;
+        UIManager.main.UpdateTrainDistance(distance);
     }
 
     private Building GetNextBuilding(Building b, Building prev)
@@ -143,6 +158,44 @@ public class TrainManager : MonoBehaviour
         targetDir = Neighbour.Top;
         lerpStart = Vec.V2to3(Vec.CellPos(currentTrack.transform.position) - NeighbourHelper.NeighbourPositions[targetDir]);
         lerpEnd = Vec.V2to3(Vec.CellPos(targetTrack.transform.position) - NeighbourHelper.NeighbourPositions[targetDir]);
+    }
+
+    public void DoDamage(bool isTrain)
+    {
+        if (isTrain)
+        {
+            trainHP -= 2;
+        }
+        else
+        {
+            playerHP -= 10;
+        }
+
+        if (trainHP <= 0 || playerHP <= 0)
+        {
+            Invoke("GameOver", 2f);
+        }
+    }
+
+    public void HealPlayer()
+    {
+        if (playerHP < maxHP && BuildingManager.main.RemoveResources())
+        {
+            playerHP = Mathf.Min(maxHP, playerHP + 10);
+        }
+    }
+
+    public void HealTrain()
+    {
+        if (trainHP < maxHP && BuildingManager.main.RemoveResources())
+        {
+            trainHP = Mathf.Min(maxHP, trainHP + 10);
+        }
+    }
+
+    public void GameOver()
+    {
+        Debug.Log("Game over!");
     }
 
     private Vector2 DirToVector(Neighbour tileDir)

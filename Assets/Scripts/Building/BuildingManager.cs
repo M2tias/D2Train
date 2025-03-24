@@ -15,6 +15,8 @@ public class BuildingManager : MonoBehaviour
     private List<Pair<BuildingType, GameObject>> defaultBuildingModels = new();
     [SerializeField]
     private int resourcePerCar = 5;
+    [SerializeField]
+    private GameObject gridContainer;
 
     private int resources = 5;
 
@@ -32,8 +34,12 @@ public class BuildingManager : MonoBehaviour
     private Construction currentConstruction;
     private Building previousBuilding;
     private bool isBuildingMode = false;
+    private bool isHealingMode = false;
+    private bool isFightMode = true;
 
     public bool IsBuildingMode { get { return isBuildingMode; } }
+    public bool IsHealingMode { get { return isHealingMode; } }
+    public bool IsFightMode { get { return isFightMode; } }
     public int Resources { get { return resources; } }
 
     public static BuildingManager main;
@@ -71,14 +77,31 @@ public class BuildingManager : MonoBehaviour
             currentConstruction = null;
         }
 
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
         {
-            isBuildingMode = !isBuildingMode;
+            isBuildingMode = true;
+            isHealingMode = false;
+            isFightMode = false;
         }
+        else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3))
+        {
+            isBuildingMode = false;
+            isHealingMode = true;
+            isFightMode = false;
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
+        {
+            isBuildingMode = false;
+            isHealingMode = false;
+            isFightMode = true;
+        }
+
+        gridContainer.SetActive(isBuildingMode);
     }
 
     public void AddBuildingQueue(List<GridCursor> list)
     {
+        resources -= list.Count;
         list.ForEach(x => buildQueue.Enqueue(MakeConstruction(x)));
     }
 
@@ -108,6 +131,17 @@ public class BuildingManager : MonoBehaviour
     public void AddResources()
     {
         resources += resourcePerCar;
+    }
+
+    public bool RemoveResources()
+    {
+        if (resources > 0)
+        {
+            resources -= 1;
+            return true;
+        }
+
+        return false;
     }
 
     private Construction MakeConstruction(GridCursor cursor)

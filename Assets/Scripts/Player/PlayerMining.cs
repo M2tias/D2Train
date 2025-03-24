@@ -13,6 +13,9 @@ public class PlayerMining : MonoBehaviour
     private float shootingHitTime = 0;
     private float shootingHitCD = 0.25f;
 
+    private float pickCD = 0.33f;
+    private float lastPickTime = 0;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -22,7 +25,7 @@ public class PlayerMining : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!BuildingManager.main.IsBuildingMode)
+        if (BuildingManager.main.IsFightMode)
         {
             if (Input.GetMouseButton(1))
             {
@@ -78,16 +81,15 @@ public class PlayerMining : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        Debug.Log("Triggered");
-
         if (other.tag == "Resource")
         {
-            Debug.Log("Triggered resource");
+            bool isNotCd = Time.time - lastPickTime > pickCD;
 
-            if (other.gameObject.TryGetComponent(out ResourcePickup pickup))
+            if (isNotCd && other.gameObject.TryGetComponent(out ResourcePickup pickup))
             {
+                lastPickTime = Time.time;
                 BuildingManager.main.AddResources();
                 Destroy(pickup.gameObject);
             }

@@ -16,8 +16,8 @@ TagManager:
   - Car
   - Enemy
   - AimRay
-  - 
-  - 
+  - NavMesh
+  - Player
   - 
   - 
   - 
