@@ -5675,7 +5675,7 @@ MonoBehaviour:
   miningAudio: {fileID: 4036171562745375458}
   shootingAudio: {fileID: 1603601119643052373}
   pickupAudio: {fileID: 8483390606527555001}
-  music: {fileID: 0}
+  music: {fileID: 5360520006379362942}
 --- !u!136 &5068093094686345140
 CapsuleCollider:
   m_ObjectHideFlags: 0

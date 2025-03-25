@@ -31,7 +31,7 @@ public class Enemy : MonoBehaviour
         if (HP == 0)
         {
             mesh.enabled = false;
-            Invoke("Kill", 2f);
+            Invoke("Kill", 0.2f);
         }
     }
 

@@ -22,7 +22,7 @@ public class EnemyNavigation : MonoBehaviour
     NavMeshAgent agent;
 
     private float shootTime = 0f;
-    private float shootCD = 3f;
+    private float shootCD = 2.5f;
     private float shootEffectTime = 1f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

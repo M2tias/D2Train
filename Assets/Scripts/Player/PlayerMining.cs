@@ -52,6 +52,7 @@ public class PlayerMining : MonoBehaviour
             if (musicDisabled)
             {
                 music.Stop();
+                isPlayingMusic = false;
             }
         }
 

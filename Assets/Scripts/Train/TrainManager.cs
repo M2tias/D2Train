@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TrainManager : MonoBehaviour
 {
@@ -143,10 +144,10 @@ public class TrainManager : MonoBehaviour
             }
         }
 
-        distance = (new Vector3(0, 0, Goal) - TrainEngine.transform.position).magnitude;
+        distance = Goal - TrainEngine.transform.position.z; // (new Vector3(0, 0, Goal) - TrainEngine.transform.position).magnitude;
         UIManager.main.UpdateTrainDistance(distance);
 
-        if (distance >= 300f)
+        if (distance <= 0f)
         {
             Invoke("YouWin", 3f);
         }
@@ -205,11 +206,13 @@ public class TrainManager : MonoBehaviour
     public void GameOver()
     {
         Debug.Log("Game over!");
+        SceneManager.LoadScene("gameover");
     }
 
     public void YouWin()
     {
         Debug.Log("You win!");
+        SceneManager.LoadScene("win");
     }
 
     private Vector2 DirToVector(Neighbour tileDir)
