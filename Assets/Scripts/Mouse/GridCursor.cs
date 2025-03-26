@@ -148,7 +148,7 @@ public class GridCursor : MonoBehaviour
                     {
                         foreach (GridCursor placement in placementObjects)
                         {
-                            isReserved = isReserved && BuildingManager.main.IsReserved(placement.transform.position);
+                            isReserved = isReserved || BuildingManager.main.IsReserved(Vec.CellPos(placement.transform.position));
 
                             if (isReserved)
                             {

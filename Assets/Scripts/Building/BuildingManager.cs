@@ -105,9 +105,16 @@ public class BuildingManager : MonoBehaviour
         list.ForEach(x => buildQueue.Enqueue(MakeConstruction(x)));
     }
 
-    public bool IsReserved(Vector3 pos)
+    public bool IsReserved(Vector2 pos)
     {
-        return reservedSpaces.Any(space => Vec.isSameCell(pos, space));
+        Vector2 reservedSpace = reservedSpaces.FirstOrDefault(space => Vec.isSameCell(pos, space));
+
+        if (reservedSpace != Vector2.zero)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public GameObject GetBuildingModel(BuildingType type, IEnumerable<Neighbour> neighbours)
